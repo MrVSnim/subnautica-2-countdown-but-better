@@ -30,7 +30,7 @@
             color: #fff;
         }
 
-        /* Исправленный оверлей: мягкое затемнение сверху и снизу */
+        
         .overlay {
             position: fixed;
             top: 0;
@@ -61,7 +61,7 @@
             background-position: center;
             opacity: 0;
             transition: opacity 3s;
-            /* Начальный масштаб чуть больше, чтобы параллакс не оголял края */
+            
             transform: scale(1.1); 
         }
 
@@ -189,6 +189,35 @@
             width: 100%; height: 100%;
             border: none;
         }
+
+        .bubble {
+    position: fixed;
+    bottom: -100px;
+    background: radial-gradient(circle at 30% 30%, rgba(255, 255, 255, 0.5), rgba(255, 255, 255, 0.1));
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    border-radius: 50%;
+    pointer-events: none;
+    z-index: 5;
+   
+    box-shadow: inset -2px -2px 5px rgba(255, 255, 255, 0.2), 
+                inset 2px 2px 5px rgba(255, 255, 255, 0.3);
+    animation: rise var(--speed) ease-in forwards, 
+               wobble var(--wobble-speed) ease-in-out infinite alternate;
+}
+
+
+@keyframes rise {
+    0% { transform: translateY(0); opacity: 0; }
+    10% { opacity: 0.8; }
+    90% { opacity: 0.8; }
+    100% { transform: translateY(-120vh); opacity: 0; }
+}
+
+
+@keyframes wobble {
+    0% { margin-left: 0px; }
+    100% { margin-left: 20px; }
+}
     </style>
 </head>
 <body>
@@ -253,7 +282,7 @@
         localStorage.setItem('subnautica_lang', lang);
     }
 
-    // Таймер
+    
     const targetDate = new Date('2026-05-14T15:00:00Z').getTime();
     function updateTimer() {
         const d = targetDate - Date.now();
@@ -270,7 +299,7 @@
         window.open("https://calendar.google.com/calendar/render?action=TEMPLATE&text=Subnautica+2&dates=20260514T150000Z/20260514T170000Z");
     }
 
-    // Фоновые изображения
+    
     const bgImages = ['img/bg1.jpg', 'img/bg2.jpg'];
     let currentImg = 0;
     const container = document.getElementById('bg-container');
@@ -290,7 +319,7 @@
         imgs[currentImg].classList.add('active');
     }, 8000);
 
-    // Параллакс
+    
     document.addEventListener('mousemove', e => {
         const x = (e.clientX / window.innerWidth - 0.5) * 15;
         const y = (e.clientY / window.innerHeight - 0.5) * 15;
@@ -299,15 +328,42 @@
         });
     });
 
-    // Звук
+    
     document.addEventListener('click', () => {
         const s = document.getElementById('sound');
         s.volume = 0.3;
         s.play().catch(()=>{});
     }, { once: true });
 
-    // Инициализация языка
+    
     setLanguage(localStorage.getItem('subnautica_lang') || 'ru');
+
+    function createBubble() {
+    const bubble = document.createElement('div');
+    bubble.className = 'bubble';
+    
+    
+    const size = Math.random() * 17 + 8 + 'px';
+    bubble.style.width = size;
+    bubble.style.height = size;
+    
+    bubble.style.left = Math.random() * 100 + 'vw';
+    
+    
+    const speed = Math.random() * 5 + 5 + 's';
+    bubble.style.setProperty('--speed', speed);
+    
+    
+    const wobbleSpeed = Math.random() * 2 + 1 + 's';
+    bubble.style.setProperty('--wobble-speed', wobbleSpeed);
+    
+    document.body.appendChild(bubble);
+    
+    setTimeout(() => { bubble.remove(); }, 10000);
+}
+
+
+setInterval(createBubble, 400);
 </script>
 
 </body>
