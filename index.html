@@ -29,9 +29,8 @@
             cursor: crosshair;
         }
 
-        #bg-container {
-            position: fixed; inset: 0; z-index: 1;
-        }
+        #bg-container { position: fixed; inset: 0; z-index: 1; }
+
         .bg-slide {
             position: absolute; inset: 0;
             background-size: cover;
@@ -61,28 +60,19 @@
             pointer-events: none;
             background: repeating-linear-gradient(
                 to bottom,
-                transparent 0px,
-                transparent 3px,
-                rgba(0,0,0,0.10) 3px,
-                rgba(0,0,0,0.10) 4px
+                transparent 0px, transparent 3px,
+                rgba(0,0,0,0.10) 3px, rgba(0,0,0,0.10) 4px
             );
         }
 
-        #particle-canvas {
-            position: fixed; inset: 0; z-index: 3;
-            pointer-events: none;
-        }
+        #particle-canvas { position: fixed; inset: 0; z-index: 3; pointer-events: none; }
 
         #sonar {
-            position: fixed;
-            bottom: 60px; right: 60px;
-            width: 90px; height: 90px;
-            z-index: 10;
-            pointer-events: none;
+            position: fixed; bottom: 60px; right: 60px;
+            width: 90px; height: 90px; z-index: 10; pointer-events: none;
         }
         .sonar-ring {
-            position: absolute; inset: 0;
-            border-radius: 50%;
+            position: absolute; inset: 0; border-radius: 50%;
             border: 1px solid rgba(0,242,254,0.6);
             animation: sonar-out 3s ease-out infinite;
         }
@@ -92,8 +82,7 @@
             position: absolute; top:50%; left:50%;
             transform: translate(-50%,-50%);
             width: 8px; height: 8px;
-            background: var(--cyan);
-            border-radius: 50%;
+            background: var(--cyan); border-radius: 50%;
             box-shadow: 0 0 12px var(--cyan);
         }
         @keyframes sonar-out {
@@ -101,73 +90,39 @@
             100% { transform: scale(1.8); opacity: 0; }
         }
 
-        .lang-switch {
-            position: fixed; top:20px; right:20px;
-            z-index: 100; display:flex; gap:8px;
-        }
+        .lang-switch { position: fixed; top:20px; right:20px; z-index: 100; display:flex; gap:8px; }
         .lang-switch button {
             background: rgba(0,25,45,0.55);
             border: 1px solid rgba(0,242,254,0.4);
-            color: var(--cyan);
-            padding: 7px 14px;
-            cursor: pointer;
-            font-family: 'Orbitron', sans-serif;
-            font-size: 0.7rem;
-            border-radius: 4px;
-            transition: 0.25s;
-            backdrop-filter: blur(8px);
-            letter-spacing: 2px;
+            color: var(--cyan); padding: 7px 14px; cursor: pointer;
+            font-family: 'Orbitron', sans-serif; font-size: 0.7rem;
+            border-radius: 4px; transition: 0.25s; backdrop-filter: blur(8px); letter-spacing: 2px;
         }
-        .lang-switch button:hover,
-        .lang-switch button.active {
-            background: var(--cyan);
-            color: #000;
+        .lang-switch button:hover, .lang-switch button.active {
+            background: var(--cyan); color: #000;
             box-shadow: 0 0 18px rgba(0,242,254,0.5);
         }
 
         #depth-meter {
             position: fixed; left: 28px; top:50%; transform:translateY(-50%);
-            z-index: 10;
-            display:flex; flex-direction:column; align-items:center; gap:6px;
+            z-index: 10; display:flex; flex-direction:column; align-items:center; gap:6px;
         }
         .depth-label {
-            font-family:'Orbitron',sans-serif;
-            font-size:0.5rem; letter-spacing:3px;
-            color:rgba(0,242,254,0.5);
-            writing-mode: vertical-rl;
-            text-orientation: mixed;
-            transform: rotate(180deg);
+            font-family:'Orbitron',sans-serif; font-size:0.5rem; letter-spacing:3px;
+            color:rgba(0,242,254,0.5); writing-mode: vertical-rl;
+            text-orientation: mixed; transform: rotate(180deg);
         }
-        .depth-bar {
-            width:2px; height:160px;
-            background: rgba(0,242,254,0.15);
-            border-radius:2px; overflow:hidden;
-        }
+        .depth-bar { width:2px; height:160px; background: rgba(0,242,254,0.15); border-radius:2px; overflow:hidden; }
         .depth-fill {
-            width:100%; background: var(--cyan);
-            box-shadow: 0 0 8px var(--cyan);
+            width:100%; background: var(--cyan); box-shadow: 0 0 8px var(--cyan);
             animation: depth-pulse 4s ease-in-out infinite;
         }
-        @keyframes depth-pulse {
-            0%,100%{ height:30%; }
-            50%{ height:80%; }
-        }
-        .depth-num {
-            font-family:'Orbitron',sans-serif;
-            font-size:0.55rem; color:var(--cyan);
-            letter-spacing:1px;
-            animation: depth-num-tick 4s ease-in-out infinite;
-        }
-        @keyframes depth-num-tick {
-            0%,100%{ content:''; }
-        }
+        @keyframes depth-pulse { 0%,100%{ height:30%; } 50%{ height:80%; } }
+        .depth-num { font-family:'Orbitron',sans-serif; font-size:0.55rem; color:var(--cyan); letter-spacing:1px; }
 
         .content {
-            position: relative; z-index: 10;
-            min-height: 100vh;
-            display: flex; flex-direction:column;
-            align-items: center;
-            padding: 70px 20px 60px;
+            position: relative; z-index: 10; min-height: 100vh;
+            display: flex; flex-direction:column; align-items: center; padding: 70px 20px 60px;
         }
 
         .logo-wrapper {
@@ -176,216 +131,148 @@
             animation: float 7s ease-in-out infinite;
         }
         .logo-wrapper img { max-width:480px; width:100%; }
-        @keyframes float {
-            0%,100%{ transform:translateY(0); }
-            50%{ transform:translateY(-14px); }
-        }
+        @keyframes float { 0%,100%{ transform:translateY(0); } 50%{ transform:translateY(-14px); } }
 
         .countdown-card {
-            background: var(--glass);
-            backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
-            border: 1px solid rgba(0,242,254,0.18);
-            border-radius: 24px;
-            padding: 44px 56px;
-            text-align: center;
-            position: relative;
-            overflow: hidden;
-            box-shadow:
-                0 0 0 1px rgba(0,242,254,0.06) inset,
-                0 30px 80px rgba(0,0,0,0.6),
-                0 0 60px rgba(0,242,254,0.05);
+            background: var(--glass); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(0,242,254,0.18); border-radius: 24px; padding: 44px 56px;
+            text-align: center; position: relative; overflow: hidden;
+            box-shadow: 0 0 0 1px rgba(0,242,254,0.06) inset, 0 30px 80px rgba(0,0,0,0.6), 0 0 60px rgba(0,242,254,0.05);
         }
-
-        .countdown-card::before,
-        .countdown-card::after {
-            content:'';
-            position:absolute;
-            width:20px; height:20px;
-            border-color: var(--cyan);
-            border-style: solid;
-            opacity: 0.5;
+        .countdown-card::before, .countdown-card::after {
+            content:''; position:absolute; width:20px; height:20px;
+            border-color: var(--cyan); border-style: solid; opacity: 0.5;
         }
         .countdown-card::before { top:12px; left:12px; border-width: 2px 0 0 2px; border-radius:4px 0 0 0; }
         .countdown-card::after  { bottom:12px; right:12px; border-width: 0 2px 2px 0; border-radius:0 0 4px 0; }
-
         .card-corner-tr, .card-corner-bl {
-            position:absolute;
-            width:20px; height:20px;
+            position:absolute; width:20px; height:20px;
             border-color: var(--cyan); border-style:solid; opacity:0.5;
         }
         .card-corner-tr { top:12px; right:12px; border-width:2px 2px 0 0; border-radius:0 4px 0 0; }
         .card-corner-bl { bottom:12px; left:12px; border-width:0 0 2px 2px; border-radius:0 0 0 4px; }
 
         .countdown-title {
-            font-family: 'Orbitron', sans-serif;
-            font-size: 0.7rem;
-            letter-spacing: 5px;
-            text-transform: uppercase;
-            color: rgba(0,242,254,0.7);
-            margin-bottom: 36px;
+            font-family: 'Orbitron', sans-serif; font-size: 0.7rem;
+            letter-spacing: 5px; text-transform: uppercase;
+            color: rgba(0,242,254,0.7); margin-bottom: 36px;
         }
 
-        .timer {
-            display: flex;
-            gap: 24px;
-            flex-wrap: wrap;
-            justify-content: center;
-            align-items: flex-start;
-        }
-
+        .timer { display: flex; gap: 24px; flex-wrap: wrap; justify-content: center; align-items: flex-start; }
         .time-block { display:flex; flex-direction:column; align-items:center; }
 
-        .flip-box {
-            position: relative;
-            width: 100px; height: 100px;
-            perspective: 400px;
-        }
-
+        .flip-box { position: relative; width: 100px; height: 100px; perspective: 400px; }
         .flip-face {
             position: absolute; inset: 0;
             display: flex; align-items:center; justify-content:center;
-            font-family: 'Orbitron', sans-serif;
-            font-size: 3.6rem;
-            font-weight: 900;
-            background: rgba(0,10,25,0.7);
-            border: 1px solid rgba(0,242,254,0.2);
-            border-radius: 14px;
-            color: #fff;
+            font-family: 'Orbitron', sans-serif; font-size: 3.6rem; font-weight: 900;
+            background: rgba(0,10,25,0.7); border: 1px solid rgba(0,242,254,0.2);
+            border-radius: 14px; color: #fff;
             text-shadow: 0 0 20px rgba(0,242,254,0.7), 0 0 40px rgba(0,242,254,0.3);
-            box-shadow: 0 0 20px rgba(0,242,254,0.08) inset;
-            transition: color 0.1s;
-            user-select: none;
+            box-shadow: 0 0 20px rgba(0,242,254,0.08) inset; transition: color 0.1s; user-select: none;
         }
-
-        .flip-face.flash {
-            animation: digit-flash 0.25s ease-out;
-        }
+        .flip-face.flash { animation: digit-flash 0.25s ease-out; }
         @keyframes digit-flash {
             0%  { text-shadow: 0 0 40px var(--cyan), 0 0 80px rgba(0,242,254,0.5); color: var(--cyan); }
             100%{ text-shadow: 0 0 20px rgba(0,242,254,0.7); color:#fff; }
         }
 
         .sep {
-            font-family: 'Orbitron', sans-serif;
-            font-size: 2.8rem; font-weight:700;
-            color: rgba(0,242,254,0.4);
-            margin-top:28px;
-            animation: blink 1s step-end infinite;
+            font-family: 'Orbitron', sans-serif; font-size: 2.8rem; font-weight:700;
+            color: rgba(0,242,254,0.4); margin-top:28px; animation: blink 1s step-end infinite;
         }
         @keyframes blink { 0%,100%{opacity:1;} 50%{opacity:0.15;} }
 
         .time-label {
-            font-size: 0.62rem;
-            font-family: 'Orbitron', sans-serif;
-            letter-spacing: 2.5px;
-            text-transform: uppercase;
-            color: var(--teal);
-            margin-top: 10px;
+            font-size: 0.62rem; font-family: 'Orbitron', sans-serif;
+            letter-spacing: 2.5px; text-transform: uppercase; color: var(--teal); margin-top: 10px;
         }
 
-        .local-time-hint {
-            margin-top: 24px;
-            font-size: 0.72rem;
-            color: rgba(0,242,254,0.5);
-            letter-spacing: 1px;
-        }
+        .local-time-hint { margin-top: 24px; font-size: 0.72rem; color: rgba(0,242,254,0.5); letter-spacing: 1px; }
         .local-time-hint span { color: var(--cyan); font-weight:600; }
 
         .calendar-btn {
-            margin-top: 30px;
-            padding: 13px 36px;
-            border-radius: 50px;
-            border: 1px solid rgba(0,242,254,0.5);
-            background: transparent;
-            color: var(--cyan);
-            cursor: pointer;
-            font-family: 'Orbitron', sans-serif;
-            font-size: 0.65rem;
-            font-weight: 700;
-            letter-spacing: 3px;
-            text-transform: uppercase;
-            transition: 0.3s;
-            position: relative;
-            overflow: hidden;
+            margin-top: 30px; padding: 13px 36px; border-radius: 50px;
+            border: 1px solid rgba(0,242,254,0.5); background: transparent; color: var(--cyan);
+            cursor: pointer; font-family: 'Orbitron', sans-serif; font-size: 0.65rem;
+            font-weight: 700; letter-spacing: 3px; text-transform: uppercase;
+            transition: 0.3s; position: relative; overflow: hidden;
         }
         .calendar-btn::after {
-            content:'';
-            position:absolute; inset:0;
-            background: var(--cyan);
-            opacity:0;
-            transition:opacity 0.3s;
+            content:''; position:absolute; inset:0; background: var(--cyan); opacity:0; transition:opacity 0.3s;
         }
-        .calendar-btn:hover {
-            box-shadow: 0 0 30px rgba(0,242,254,0.35), 0 0 8px rgba(0,242,254,0.2) inset;
-            color:#000;
-        }
+        .calendar-btn:hover { box-shadow: 0 0 30px rgba(0,242,254,0.35), 0 0 8px rgba(0,242,254,0.2) inset; color:#000; }
         .calendar-btn:hover::after { opacity:1; }
         .calendar-btn span { position:relative; z-index:1; }
 
+        #launched-screen { display: none; flex-direction: column; align-items: center; gap: 28px; }
+
+        @keyframes fadeInUp { from { opacity:0; transform:translateY(20px); } to { opacity:1; transform:translateY(0); } }
+
+        .launched-title {
+            font-family: 'Orbitron', sans-serif; font-size: 2rem; font-weight: 900;
+            letter-spacing: 4px; text-transform: uppercase;
+            background: linear-gradient(90deg, var(--cyan), var(--teal), var(--cyan));
+            background-size: 200%; -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+            animation: shimmer 3s linear infinite;
+        }
+        @keyframes shimmer { to { background-position: 200% center; } }
+
+        .launched-sub { font-size: 0.8rem; letter-spacing: 3px; color: rgba(255,255,255,0.45); text-transform: uppercase; }
+
+        .store-buttons { display: flex; gap: 16px; flex-wrap: wrap; justify-content: center; margin-top: 8px; }
+
+        .store-btn {
+            display: flex; align-items: center; gap: 14px;
+            padding: 14px 28px; border-radius: 12px;
+            border: 1px solid rgba(255,255,255,0.15);
+            background: rgba(255,255,255,0.05); color: #fff;
+            text-decoration: none; font-family: 'Exo 2', sans-serif;
+            font-size: 0.85rem; font-weight: 600; letter-spacing: 1px;
+            transition: 0.3s; backdrop-filter: blur(10px);
+        }
+        .store-btn:hover {
+            border-color: var(--cyan);
+            box-shadow: 0 0 25px rgba(0,242,254,0.2), 0 8px 30px rgba(0,0,0,0.4);
+            transform: translateY(-2px);
+        }
+        .store-btn img { width: 32px; height: 32px; object-fit: contain; }
+        .store-btn-text { display: flex; flex-direction: column; align-items: flex-start; }
+        .store-btn-sub  { font-size: 0.6rem; color: rgba(255,255,255,0.5); letter-spacing: 2px; text-transform: uppercase; }
+        .store-btn-name { font-size: 1rem; font-weight: 700; }
+
         .divider {
-            width: 100%; max-width: 700px;
-            height: 1px;
-            margin: 60px 0;
+            width: 100%; max-width: 700px; height: 1px; margin: 60px 0;
             background: linear-gradient(to right, transparent, rgba(0,242,254,0.35), transparent);
         }
 
         .trailer-section { width:100%; max-width:860px; }
         .trailer-label {
-            font-family:'Orbitron',sans-serif;
-            font-size:0.65rem; letter-spacing:5px;
-            color:rgba(0,242,254,0.55);
-            text-align:center;
-            margin-bottom:20px;
+            font-family:'Orbitron',sans-serif; font-size:0.65rem; letter-spacing:5px;
+            color:rgba(0,242,254,0.55); text-align:center; margin-bottom:20px;
         }
         .trailer-wrapper {
-            position: relative;
-            padding-top: 56.25%;
-            border-radius: 18px;
-            overflow: hidden;
+            position: relative; padding-top: 56.25%; border-radius: 18px; overflow: hidden;
             box-shadow: 0 0 0 1px rgba(0,242,254,0.15), 0 30px 80px rgba(0,0,0,0.7);
         }
-        .trailer-wrapper iframe {
-            position:absolute; inset:0;
-            width:100%; height:100%;
-            border:none;
-        }
+        .trailer-wrapper iframe { position:absolute; inset:0; width:100%; height:100%; border:none; }
 
-        .footer {
-            margin-top: 60px;
-            font-size: 0.6rem;
-            letter-spacing: 3px;
-            color: rgba(255,255,255,0.18);
-            text-transform: uppercase;
-        }
+        .footer { margin-top: 60px; font-size: 0.6rem; letter-spacing: 3px; color: rgba(255,255,255,0.18); text-transform: uppercase; }
 
         .bubble {
-            position: fixed;
-            bottom: -60px;
-            border-radius: 50%;
-            pointer-events: none;
-            z-index: 4;
-            background: radial-gradient(circle at 35% 35%,
-                rgba(255,255,255,0.55),
-                rgba(0,200,220,0.12));
+            position: fixed; bottom: -60px; border-radius: 50%; pointer-events: none; z-index: 4;
+            background: radial-gradient(circle at 35% 35%, rgba(255,255,255,0.55), rgba(0,200,220,0.12));
             border: 1px solid rgba(255,255,255,0.22);
-            box-shadow:
-                inset -2px -3px 6px rgba(255,255,255,0.25),
-                inset  2px  2px 6px rgba(0,200,240,0.15);
-            animation:
-                rise var(--spd) ease-in forwards,
-                wobble var(--wob) ease-in-out infinite alternate;
+            box-shadow: inset -2px -3px 6px rgba(255,255,255,0.25), inset 2px 2px 6px rgba(0,200,240,0.15);
+            animation: rise var(--spd) ease-in forwards, wobble var(--wob) ease-in-out infinite alternate;
         }
         @keyframes rise {
-            0%   { transform:translateY(0);       opacity:0; }
+            0%   { transform:translateY(0); opacity:0; }
             8%   { opacity:0.75; }
             92%  { opacity:0.75; }
             100% { transform:translateY(-115vh); opacity:0; }
         }
-        @keyframes wobble {
-            from { margin-left:0; }
-            to   { margin-left:22px; }
-        }
+        @keyframes wobble { from { margin-left:0; } to { margin-left:22px; } }
 
         @media(max-width:600px){
             .countdown-card{ padding:30px 20px; }
@@ -395,6 +282,8 @@
             .sep{ font-size:2rem; }
             #depth-meter{ display:none; }
             #sonar{ bottom:20px; right:20px; width:60px; height:60px; }
+            .launched-title{ font-size:1.3rem; }
+            .store-buttons{ flex-direction:column; }
         }
     </style>
 </head>
@@ -412,7 +301,7 @@
 </div>
 
 <div id="depth-meter">
-    <div class="depth-label" id="l-depth">DEPTH</div>
+    <div class="depth-label" id="l-depth">ГЛУБИНА</div>
     <div class="depth-bar"><div class="depth-fill"></div></div>
     <div class="depth-num" id="depth-readout">1024m</div>
 </div>
@@ -430,59 +319,81 @@
     <div class="countdown-card">
         <div class="card-corner-tr"></div>
         <div class="card-corner-bl"></div>
-        <div class="countdown-title" id="t-title">Экспедиция начнётся через</div>
-        <div class="timer">
-            <div class="time-block">
-                <div class="flip-box"><div class="flip-face" id="days">00</div></div>
-                <div class="time-label" id="l-days">Дней</div>
+
+        <div id="countdown-screen">
+            <div class="countdown-title" id="t-title">Экспедиция начнётся через</div>
+            <div class="timer">
+                <div class="time-block">
+                    <div class="flip-box"><div class="flip-face" id="days">00</div></div>
+                    <div class="time-label" id="l-days">Дней</div>
+                </div>
+                <div class="sep">:</div>
+                <div class="time-block">
+                    <div class="flip-box"><div class="flip-face" id="hours">00</div></div>
+                    <div class="time-label" id="l-hours">Часов</div>
+                </div>
+                <div class="sep">:</div>
+                <div class="time-block">
+                    <div class="flip-box"><div class="flip-face" id="minutes">00</div></div>
+                    <div class="time-label" id="l-minutes">Минут</div>
+                </div>
+                <div class="sep">:</div>
+                <div class="time-block">
+                    <div class="flip-box"><div class="flip-face" id="seconds">00</div></div>
+                    <div class="time-label" id="l-seconds">Секунд</div>
+                </div>
             </div>
-            <div class="sep">:</div>
-            <div class="time-block">
-                <div class="flip-box"><div class="flip-face" id="hours">00</div></div>
-                <div class="time-label" id="l-hours">Часов</div>
-            </div>
-            <div class="sep">:</div>
-            <div class="time-block">
-                <div class="flip-box"><div class="flip-face" id="minutes">00</div></div>
-                <div class="time-label" id="l-minutes">Минут</div>
-            </div>
-            <div class="sep">:</div>
-            <div class="time-block">
-                <div class="flip-box"><div class="flip-face" id="seconds">00</div></div>
-                <div class="time-label" id="l-seconds">Секунд</div>
-            </div>
+            <div class="local-time-hint" id="local-hint"></div>
+            <button class="calendar-btn" onclick="addToCalendar()">
+                <span id="t-btn">Добавить в календарь</span>
+            </button>
         </div>
 
-        <div class="local-time-hint" id="local-hint"></div>
-
-        <button class="calendar-btn" onclick="addToCalendar()">
-            <span id="t-btn">Добавить в календарь</span>
-        </button>
+        <div id="launched-screen">
+            <div class="launched-title" id="t-launched">Экспедиция началась!</div>
+            <div class="launched-sub" id="t-launched-sub">Subnautica 2 уже доступна</div>
+            <div class="store-buttons">
+                <a class="store-btn" href="https://store.steampowered.com/app/1962700/Subnautica_2/" target="_blank">
+                    <img src="img/steam.png" alt="Steam">
+                    <div class="store-btn-text">
+                        <span class="store-btn-sub" id="t-buy-steam">Купить в</span>
+                        <span class="store-btn-name">Steam</span>
+                    </div>
+                </a>
+                <a class="store-btn" href="https://store.epicgames.com/p/subnautica-2-d27f94" target="_blank">
+                    <img src="img/epic.png" alt="Epic Games">
+                    <div class="store-btn-text">
+                        <span class="store-btn-sub" id="t-buy-epic">Купить в</span>
+                        <span class="store-btn-name">Epic Games</span>
+                    </div>
+                </a>
+            </div>
+        </div>
     </div>
 
     <div class="divider"></div>
 
-<div class="trailer-section">
-    <div class="trailer-label">— СИНЕМАТИК ТРЕЙЛЕР —</div>
-    <div class="trailer-wrapper">
-        <iframe src="https://www.youtube.com/embed/8EZhCzFaQuw"
-                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                allowfullscreen loading="lazy"></iframe>
+    <div class="trailer-section">
+        <div class="trailer-label" id="t-trailer-cinematic">— СИНЕМАТИК ТРЕЙЛЕР —</div>
+        <div class="trailer-wrapper">
+            <iframe src="https://www.youtube.com/embed/8EZhCzFaQuw"
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                    allowfullscreen loading="lazy"></iframe>
+        </div>
     </div>
-</div>
 
-<div class="divider"></div>
+    <div class="divider"></div>
 
-<div class="trailer-section">
-    <div class="trailer-label">— ГЕЙМПЛЕЙ ТРЕЙЛЕР —</div>
-    <div class="trailer-wrapper">
-        <iframe src="https://www.youtube.com/embed/6t2nDHldoSk"
-                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                allowfullscreen loading="lazy"></iframe>
+    <div class="trailer-section">
+        <div class="trailer-label" id="t-trailer-gameplay">— ГЕЙМПЛЕЙ ТРЕЙЛЕР —</div>
+        <div class="trailer-wrapper">
+            <iframe src="https://www.youtube.com/embed/6t2nDHldoSk"
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                    allowfullscreen loading="lazy"></iframe>
+        </div>
     </div>
-</div>
 
-    <div class="footer" id="t-footer">Unknown Worlds Entertainment © 2026</div>
+    <div class="footer">Unknown Worlds Entertainment © 2026</div>
 </div>
 
 <audio id="ambient" loop>
@@ -490,8 +401,6 @@
 </audio>
 
 <script>
-
-
 const BG_IMAGES = [
     'img/bg1.jpg',
     'img/bg2.jpg',
@@ -510,26 +419,34 @@ const TARGET_UTC = new Date('2026-05-14T15:00:00Z');
 
 const TR = {
     ru: {
-        title:   'Экспедиция начнётся через',
-        days:    'Дней',
-        hours:   'Часов',
-        minutes: 'Минут',
-        seconds: 'Секунд',
-        btn:     'Добавить в календарь',
-        trailer: '— ОФИЦИАЛЬНЫЙ ТРЕЙЛЕР —',
-        depth:   'ГЛУБИНА',
-        hint:    (t) => `Начало в вашем часовом поясе: <span>${t}</span>`,
+        title:            'Экспедиция начнётся через',
+        days:             'Дней',
+        hours:            'Часов',
+        minutes:          'Минут',
+        seconds:          'Секунд',
+        btn:              'Добавить в календарь',
+        trailerCinematic: '— СИНЕМАТИК ТРЕЙЛЕР —',
+        trailerGameplay:  '— ГЕЙМПЛЕЙ ТРЕЙЛЕР —',
+        depth:            'ГЛУБИНА',
+        hint:             (t) => `Начало в вашем часовом поясе: <span>${t}</span>`,
+        launched:         'Экспедиция началась!',
+        launchedSub:      'Subnautica 2 уже доступна',
+        buyOn:            'Купить в',
     },
     en: {
-        title:   'Expedition starts in',
-        days:    'Days',
-        hours:   'Hours',
-        minutes: 'Minutes',
-        seconds: 'Seconds',
-        btn:     'Add to Calendar',
-        trailer: '— OFFICIAL TRAILER —',
-        depth:   'DEPTH',
-        hint:    (t) => `Launches in your timezone: <span>${t}</span>`,
+        title:            'Expedition starts in',
+        days:             'Days',
+        hours:            'Hours',
+        minutes:          'Minutes',
+        seconds:          'Seconds',
+        btn:              'Add to Calendar',
+        trailerCinematic: '— CINEMATIC TRAILER —',
+        trailerGameplay:  '— GAMEPLAY TRAILER —',
+        depth:            'DEPTH',
+        hint:             (t) => `Launches in your timezone: <span>${t}</span>`,
+        launched:         'The Expedition Has Begun!',
+        launchedSub:      'Subnautica 2 is now available',
+        buyOn:            'Get it on',
     }
 };
 
@@ -537,33 +454,35 @@ let currentLang = 'ru';
 
 function localEventTime() {
     return TARGET_UTC.toLocaleString(currentLang === 'ru' ? 'ru-RU' : 'en-US', {
-        day:    'numeric',
-        month:  'long',
-        year:   'numeric',
-        hour:   '2-digit',
-        minute: '2-digit',
-        timeZoneName: 'short'
+        day: 'numeric', month: 'long', year: 'numeric',
+        hour: '2-digit', minute: '2-digit', timeZoneName: 'short'
     });
 }
 
 function setLanguage(lang) {
     currentLang = lang;
     const t = TR[lang];
-    document.getElementById('t-title').textContent   = t.title;
-    document.getElementById('l-days').textContent    = t.days;
-    document.getElementById('l-hours').textContent   = t.hours;
-    document.getElementById('l-minutes').textContent = t.minutes;
-    document.getElementById('l-seconds').textContent = t.seconds;
-    document.getElementById('t-btn').textContent     = t.btn;
-    document.getElementById('l-depth').textContent   = t.depth;
-    document.getElementById('local-hint').innerHTML  = t.hint(localEventTime());
-
+    document.getElementById('t-title').textContent             = t.title;
+    document.getElementById('l-days').textContent              = t.days;
+    document.getElementById('l-hours').textContent             = t.hours;
+    document.getElementById('l-minutes').textContent           = t.minutes;
+    document.getElementById('l-seconds').textContent           = t.seconds;
+    document.getElementById('t-btn').textContent               = t.btn;
+    document.getElementById('t-trailer-cinematic').textContent = t.trailerCinematic;
+    document.getElementById('t-trailer-gameplay').textContent  = t.trailerGameplay;
+    document.getElementById('l-depth').textContent             = t.depth;
+    document.getElementById('local-hint').innerHTML            = t.hint(localEventTime());
+    document.getElementById('t-launched').textContent          = t.launched;
+    document.getElementById('t-launched-sub').textContent      = t.launchedSub;
+    document.getElementById('t-buy-steam').textContent         = t.buyOn;
+    document.getElementById('t-buy-epic').textContent          = t.buyOn;
     document.querySelectorAll('.lang-switch button').forEach(b => b.classList.remove('active'));
     document.getElementById('btn-' + lang).classList.add('active');
     localStorage.setItem('sub2_lang', lang);
 }
 
 const prev = { d: -1, h: -1, m: -1, s: -1 };
+let launched = false;
 
 function pad(n) { return String(n).padStart(2, '0'); }
 
@@ -574,20 +493,22 @@ function flash(id) {
     el.classList.add('flash');
 }
 
+function showLaunched() {
+    if (launched) return;
+    launched = true;
+    document.getElementById('countdown-screen').style.display = 'none';
+    const ls = document.getElementById('launched-screen');
+    ls.style.display = 'flex';
+    ls.style.animation = 'fadeInUp 0.8s ease forwards';
+}
+
 function updateTimer() {
     const diff = TARGET_UTC.getTime() - Date.now();
-    if (diff <= 0) {
-        ['days','hours','minutes','seconds'].forEach(id => {
-            document.getElementById(id).textContent = '00';
-        });
-        return;
-    }
-
+    if (diff <= 0) { showLaunched(); return; }
     const d = Math.floor(diff / 86400000);
     const h = Math.floor(diff / 3600000) % 24;
     const m = Math.floor(diff / 60000) % 60;
     const s = Math.floor(diff / 1000)  % 60;
-
     if (d !== prev.d) { document.getElementById('days').textContent    = pad(d); flash('days');    prev.d = d; }
     if (h !== prev.h) { document.getElementById('hours').textContent   = pad(h); flash('hours');   prev.h = h; }
     if (m !== prev.m) { document.getElementById('minutes').textContent = pad(m); flash('minutes'); prev.m = m; }
@@ -597,8 +518,7 @@ function updateTimer() {
 setInterval(updateTimer, 500);
 updateTimer();
 
-let depthVal = 800;
-let depthDir = 1;
+let depthVal = 800, depthDir = 1;
 setInterval(() => {
     depthVal += (Math.random() * 20 - 8) * depthDir;
     depthVal = Math.max(512, Math.min(2048, depthVal));
@@ -618,20 +538,17 @@ function addToCalendar() {
 
 (function initBg() {
     const container = document.getElementById('bg-container');
-    let slides = [];
-
-    BG_IMAGES.forEach((src, i) => {
+    const slides = [];
+    BG_IMAGES.forEach(src => {
         const div = document.createElement('div');
         div.className = 'bg-slide';
         div.style.backgroundImage = `url(${src})`;
         container.appendChild(div);
         slides.push(div);
     });
-
     if (!slides.length) return;
     slides[0].classList.add('active');
     let cur = 0;
-
     setInterval(() => {
         slides[cur].classList.remove('active');
         cur = (cur + 1) % slides.length;
@@ -650,45 +567,30 @@ document.addEventListener('mousemove', e => {
 (function initParticles() {
     const canvas = document.getElementById('particle-canvas');
     const ctx = canvas.getContext('2d');
-    let W, H, particles = [];
-
-    function resize() {
-        W = canvas.width  = innerWidth;
-        H = canvas.height = innerHeight;
-    }
+    let W, H;
+    function resize() { W = canvas.width = innerWidth; H = canvas.height = innerHeight; }
     resize();
     window.addEventListener('resize', resize);
-
-    const COUNT = 80;
-    for (let i = 0; i < COUNT; i++) {
+    const particles = [];
+    for (let i = 0; i < 80; i++) {
         particles.push({
-            x:    Math.random() * innerWidth,
-            y:    Math.random() * innerHeight,
-            r:    Math.random() * 2.5 + 0.5,
-            vx:   (Math.random() - 0.5) * 0.3,
-            vy:   -(Math.random() * 0.5 + 0.1),
-            life: Math.random(),
-            spd:  Math.random() * 0.003 + 0.001,
-            hue:  Math.random() > 0.5 ? 185 : 160,
+            x: Math.random() * innerWidth, y: Math.random() * innerHeight,
+            r: Math.random() * 2.5 + 0.5, vx: (Math.random() - 0.5) * 0.3,
+            vy: -(Math.random() * 0.5 + 0.1), life: Math.random(),
+            spd: Math.random() * 0.003 + 0.001, hue: Math.random() > 0.5 ? 185 : 160,
         });
     }
-
     function draw() {
         ctx.clearRect(0, 0, W, H);
         particles.forEach(p => {
             p.life += p.spd;
-            if (p.life > 1) {
-                p.life = 0;
-                p.x = Math.random() * W;
-                p.y = H + 20;
-                p.vy = -(Math.random() * 0.5 + 0.1);
-            }
+            if (p.life > 1) { p.life = 0; p.x = Math.random() * W; p.y = H + 20; p.vy = -(Math.random() * 0.5 + 0.1); }
             const alpha = Math.sin(p.life * Math.PI) * 0.7;
             ctx.beginPath();
             ctx.arc(p.x + p.vx * p.life * 200, p.y - p.vy * p.life * 300, p.r, 0, Math.PI * 2);
             ctx.fillStyle = `hsla(${p.hue}, 100%, 75%, ${alpha})`;
             ctx.shadowColor = `hsl(${p.hue}, 100%, 80%)`;
-            ctx.shadowBlur  = 8;
+            ctx.shadowBlur = 8;
             ctx.fill();
         });
         requestAnimationFrame(draw);
@@ -700,12 +602,7 @@ function spawnBubble() {
     const b = document.createElement('div');
     b.className = 'bubble';
     const sz = Math.random() * 20 + 6;
-    b.style.cssText = `
-        width:${sz}px; height:${sz}px;
-        left:${Math.random()*100}vw;
-        --spd:${Math.random()*6+6}s;
-        --wob:${Math.random()*2+1}s;
-    `;
+    b.style.cssText = `width:${sz}px;height:${sz}px;left:${Math.random()*100}vw;--spd:${Math.random()*6+6}s;--wob:${Math.random()*2+1}s;`;
     document.body.appendChild(b);
     setTimeout(() => b.remove(), 13000);
 }
