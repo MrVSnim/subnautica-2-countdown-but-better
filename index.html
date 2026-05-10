@@ -3,368 +3,710 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Subnautica 2 - Deep Dive Countdown</title>
-    <link rel="icon" href="favicon.ico">
+    <title>Subnautica 2 — Deep Dive Countdown</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Exo+2:wght@300;400;600&display=swap" rel="stylesheet">
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;700;900&display=swap');
-
         :root {
-            --primary-blue: #00f2fe;
-            --deep-blue: #00192d;
-            --accent-cyan: #4facfe;
+            --cyan:    #00f2fe;
+            --teal:    #00c9a7;
+            --deep:    #00192d;
+            --abyssal: #000a14;
+            --glow:    rgba(0,242,254,0.15);
+            --glass:   rgba(0,20,40,0.45);
         }
 
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
+        *, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
 
-        body, html {
-            width: 100%;
-            height: 100%;
-            font-family: 'Montserrat', sans-serif;
-            background-color: #000;
+        html, body {
+            width:100%; height:100%;
+            font-family: 'Exo 2', sans-serif;
+            background: var(--abyssal);
+            color: #fff;
             overflow-x: hidden;
             overflow-y: auto;
-            color: #fff;
-        }
-
-        
-        .overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(to bottom, 
-                rgba(0,0,0,0.9) 0%, 
-                rgba(0,0,0,0.3) 25%, 
-                rgba(0,0,0,0.3) 75%, 
-                rgba(0,0,0,0.9) 100%);
-            z-index: 2;
-            pointer-events: none;
+            cursor: crosshair;
         }
 
         #bg-container {
-            position: fixed;
-            width: 100%;
-            height: 100%;
-            z-index: 1;
+            position: fixed; inset: 0; z-index: 1;
         }
-
-        .bg-image {
-            position: absolute;
-            width: 100%;
-            height: 100%;
+        .bg-slide {
+            position: absolute; inset: 0;
             background-size: cover;
             background-position: center;
             opacity: 0;
-            transition: opacity 3s;
-            
-            transform: scale(1.1); 
+            transition: opacity 2.5s ease;
+            transform: scale(1.08);
+            will-change: transform, opacity;
+        }
+        .bg-slide.active { opacity: 1; }
+
+        #bg-container::after {
+            content: '';
+            position: absolute; inset: 0;
+            background:
+                radial-gradient(ellipse at 50% 0%, rgba(0,242,254,0.06) 0%, transparent 60%),
+                linear-gradient(to bottom,
+                    rgba(0,0,0,0.85) 0%,
+                    rgba(0,10,20,0.35) 30%,
+                    rgba(0,10,20,0.35) 70%,
+                    rgba(0,0,0,0.90) 100%);
+            pointer-events: none;
         }
 
-        .bg-image.active { opacity: 1; }
+        #scanlines {
+            position: fixed; inset: 0; z-index: 2;
+            pointer-events: none;
+            background: repeating-linear-gradient(
+                to bottom,
+                transparent 0px,
+                transparent 3px,
+                rgba(0,0,0,0.10) 3px,
+                rgba(0,0,0,0.10) 4px
+            );
+        }
+
+        #particle-canvas {
+            position: fixed; inset: 0; z-index: 3;
+            pointer-events: none;
+        }
+
+        #sonar {
+            position: fixed;
+            bottom: 60px; right: 60px;
+            width: 90px; height: 90px;
+            z-index: 10;
+            pointer-events: none;
+        }
+        .sonar-ring {
+            position: absolute; inset: 0;
+            border-radius: 50%;
+            border: 1px solid rgba(0,242,254,0.6);
+            animation: sonar-out 3s ease-out infinite;
+        }
+        .sonar-ring:nth-child(2){ animation-delay: 1s; }
+        .sonar-ring:nth-child(3){ animation-delay: 2s; }
+        .sonar-dot {
+            position: absolute; top:50%; left:50%;
+            transform: translate(-50%,-50%);
+            width: 8px; height: 8px;
+            background: var(--cyan);
+            border-radius: 50%;
+            box-shadow: 0 0 12px var(--cyan);
+        }
+        @keyframes sonar-out {
+            0%   { transform: scale(0.1); opacity: 0.8; }
+            100% { transform: scale(1.8); opacity: 0; }
+        }
 
         .lang-switch {
-            position: fixed;
-            top: 20px;
-            right: 20px;
-            z-index: 100;
-            display: flex;
-            gap: 10px;
+            position: fixed; top:20px; right:20px;
+            z-index: 100; display:flex; gap:8px;
         }
-
         .lang-switch button {
-            background: rgba(0, 25, 45, 0.6);
-            border: 1px solid var(--primary-blue);
-            color: var(--primary-blue);
-            padding: 8px 15px;
+            background: rgba(0,25,45,0.55);
+            border: 1px solid rgba(0,242,254,0.4);
+            color: var(--cyan);
+            padding: 7px 14px;
             cursor: pointer;
-            font-family: 'Montserrat', sans-serif;
-            font-weight: bold;
-            border-radius: 5px;
-            transition: 0.3s;
-            backdrop-filter: blur(5px);
+            font-family: 'Orbitron', sans-serif;
+            font-size: 0.7rem;
+            border-radius: 4px;
+            transition: 0.25s;
+            backdrop-filter: blur(8px);
+            letter-spacing: 2px;
+        }
+        .lang-switch button:hover,
+        .lang-switch button.active {
+            background: var(--cyan);
+            color: #000;
+            box-shadow: 0 0 18px rgba(0,242,254,0.5);
         }
 
-        .lang-switch button:hover {
-            background: var(--primary-blue);
-            color: #000;
-            box-shadow: 0 0 15px var(--primary-blue);
+        #depth-meter {
+            position: fixed; left: 28px; top:50%; transform:translateY(-50%);
+            z-index: 10;
+            display:flex; flex-direction:column; align-items:center; gap:6px;
+        }
+        .depth-label {
+            font-family:'Orbitron',sans-serif;
+            font-size:0.5rem; letter-spacing:3px;
+            color:rgba(0,242,254,0.5);
+            writing-mode: vertical-rl;
+            text-orientation: mixed;
+            transform: rotate(180deg);
+        }
+        .depth-bar {
+            width:2px; height:160px;
+            background: rgba(0,242,254,0.15);
+            border-radius:2px; overflow:hidden;
+        }
+        .depth-fill {
+            width:100%; background: var(--cyan);
+            box-shadow: 0 0 8px var(--cyan);
+            animation: depth-pulse 4s ease-in-out infinite;
+        }
+        @keyframes depth-pulse {
+            0%,100%{ height:30%; }
+            50%{ height:80%; }
+        }
+        .depth-num {
+            font-family:'Orbitron',sans-serif;
+            font-size:0.55rem; color:var(--cyan);
+            letter-spacing:1px;
+            animation: depth-num-tick 4s ease-in-out infinite;
+        }
+        @keyframes depth-num-tick {
+            0%,100%{ content:''; }
         }
 
         .content {
-            position: relative;
-            z-index: 10;
+            position: relative; z-index: 10;
             min-height: 100vh;
-            display: flex;
-            flex-direction: column;
+            display: flex; flex-direction:column;
             align-items: center;
-            padding: 60px 20px;
+            padding: 70px 20px 60px;
         }
 
-        .logo-wrapper img {
-            max-width: 500px;
-            width: 100%;
-            margin-bottom: 40px;
-            animation: float 6s ease-in-out infinite;
+        .logo-wrapper {
+            margin-bottom: 50px;
+            filter: drop-shadow(0 0 30px rgba(0,242,254,0.4));
+            animation: float 7s ease-in-out infinite;
+        }
+        .logo-wrapper img { max-width:480px; width:100%; }
+        @keyframes float {
+            0%,100%{ transform:translateY(0); }
+            50%{ transform:translateY(-14px); }
         }
 
-        @keyframes float { 50% { transform: translateY(-15px); } }
-
-        .countdown-wrapper {
-            background: rgba(0,20,35,0.4);
-            backdrop-filter: blur(15px);
-            border-radius: 25px;
-            padding: 40px;
+        .countdown-card {
+            background: var(--glass);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(0,242,254,0.18);
+            border-radius: 24px;
+            padding: 44px 56px;
             text-align: center;
-            border: 1px solid rgba(0, 242, 254, 0.1);
+            position: relative;
+            overflow: hidden;
+            box-shadow:
+                0 0 0 1px rgba(0,242,254,0.06) inset,
+                0 30px 80px rgba(0,0,0,0.6),
+                0 0 60px rgba(0,242,254,0.05);
         }
+
+        .countdown-card::before,
+        .countdown-card::after {
+            content:'';
+            position:absolute;
+            width:20px; height:20px;
+            border-color: var(--cyan);
+            border-style: solid;
+            opacity: 0.5;
+        }
+        .countdown-card::before { top:12px; left:12px; border-width: 2px 0 0 2px; border-radius:4px 0 0 0; }
+        .countdown-card::after  { bottom:12px; right:12px; border-width: 0 2px 2px 0; border-radius:0 0 4px 0; }
+
+        .card-corner-tr, .card-corner-bl {
+            position:absolute;
+            width:20px; height:20px;
+            border-color: var(--cyan); border-style:solid; opacity:0.5;
+        }
+        .card-corner-tr { top:12px; right:12px; border-width:2px 2px 0 0; border-radius:0 4px 0 0; }
+        .card-corner-bl { bottom:12px; left:12px; border-width:0 0 2px 2px; border-radius:0 0 0 4px; }
 
         .countdown-title {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 0.7rem;
             letter-spacing: 5px;
-            margin-bottom: 30px;
             text-transform: uppercase;
-            font-size: 0.9rem;
+            color: rgba(0,242,254,0.7);
+            margin-bottom: 36px;
         }
 
         .timer {
             display: flex;
-            gap: 30px;
+            gap: 24px;
             flex-wrap: wrap;
             justify-content: center;
+            align-items: flex-start;
         }
 
-        .time-box span {
-            font-size: 4rem;
+        .time-block { display:flex; flex-direction:column; align-items:center; }
+
+        .flip-box {
+            position: relative;
+            width: 100px; height: 100px;
+            perspective: 400px;
+        }
+
+        .flip-face {
+            position: absolute; inset: 0;
+            display: flex; align-items:center; justify-content:center;
+            font-family: 'Orbitron', sans-serif;
+            font-size: 3.6rem;
             font-weight: 900;
-            display: block;
-            line-height: 1;
+            background: rgba(0,10,25,0.7);
+            border: 1px solid rgba(0,242,254,0.2);
+            border-radius: 14px;
+            color: #fff;
+            text-shadow: 0 0 20px rgba(0,242,254,0.7), 0 0 40px rgba(0,242,254,0.3);
+            box-shadow: 0 0 20px rgba(0,242,254,0.08) inset;
+            transition: color 0.1s;
+            user-select: none;
         }
 
-        .time-box div {
-            font-size: 0.8rem;
-            text-transform: uppercase;
-            margin-top: 10px;
-            color: var(--accent-cyan);
+        .flip-face.flash {
+            animation: digit-flash 0.25s ease-out;
         }
+        @keyframes digit-flash {
+            0%  { text-shadow: 0 0 40px var(--cyan), 0 0 80px rgba(0,242,254,0.5); color: var(--cyan); }
+            100%{ text-shadow: 0 0 20px rgba(0,242,254,0.7); color:#fff; }
+        }
+
+        .sep {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 2.8rem; font-weight:700;
+            color: rgba(0,242,254,0.4);
+            margin-top:28px;
+            animation: blink 1s step-end infinite;
+        }
+        @keyframes blink { 0%,100%{opacity:1;} 50%{opacity:0.15;} }
+
+        .time-label {
+            font-size: 0.62rem;
+            font-family: 'Orbitron', sans-serif;
+            letter-spacing: 2.5px;
+            text-transform: uppercase;
+            color: var(--teal);
+            margin-top: 10px;
+        }
+
+        .local-time-hint {
+            margin-top: 24px;
+            font-size: 0.72rem;
+            color: rgba(0,242,254,0.5);
+            letter-spacing: 1px;
+        }
+        .local-time-hint span { color: var(--cyan); font-weight:600; }
 
         .calendar-btn {
-            margin-top: 35px;
-            padding: 15px 35px;
-            border-radius: 40px;
-            border: 1px solid var(--primary-blue);
+            margin-top: 30px;
+            padding: 13px 36px;
+            border-radius: 50px;
+            border: 1px solid rgba(0,242,254,0.5);
             background: transparent;
-            color: var(--primary-blue);
+            color: var(--cyan);
             cursor: pointer;
-            font-weight: bold;
+            font-family: 'Orbitron', sans-serif;
+            font-size: 0.65rem;
+            font-weight: 700;
+            letter-spacing: 3px;
+            text-transform: uppercase;
             transition: 0.3s;
+            position: relative;
+            overflow: hidden;
         }
-
+        .calendar-btn::after {
+            content:'';
+            position:absolute; inset:0;
+            background: var(--cyan);
+            opacity:0;
+            transition:opacity 0.3s;
+        }
         .calendar-btn:hover {
-            background: rgba(0,242,254,0.2);
-            box-shadow: 0 0 20px rgba(0,242,254,0.3);
+            box-shadow: 0 0 30px rgba(0,242,254,0.35), 0 0 8px rgba(0,242,254,0.2) inset;
+            color:#000;
+        }
+        .calendar-btn:hover::after { opacity:1; }
+        .calendar-btn span { position:relative; z-index:1; }
+
+        .divider {
+            width: 100%; max-width: 700px;
+            height: 1px;
+            margin: 60px 0;
+            background: linear-gradient(to right, transparent, rgba(0,242,254,0.35), transparent);
         }
 
-        .trailer-section {
-            margin-top: 80px;
-            width: 100%;
-            max-width: 900px;
-            padding-bottom: 50px;
+        .trailer-section { width:100%; max-width:860px; }
+        .trailer-label {
+            font-family:'Orbitron',sans-serif;
+            font-size:0.65rem; letter-spacing:5px;
+            color:rgba(0,242,254,0.55);
+            text-align:center;
+            margin-bottom:20px;
         }
-
         .trailer-wrapper {
             position: relative;
             padding-top: 56.25%;
-            border-radius: 20px;
+            border-radius: 18px;
             overflow: hidden;
-            box-shadow: 0 20px 50px rgba(0,0,0,0.5);
+            box-shadow: 0 0 0 1px rgba(0,242,254,0.15), 0 30px 80px rgba(0,0,0,0.7);
+        }
+        .trailer-wrapper iframe {
+            position:absolute; inset:0;
+            width:100%; height:100%;
+            border:none;
         }
 
-        .trailer-wrapper iframe {
-            position: absolute;
-            top: 0; left: 0;
-            width: 100%; height: 100%;
-            border: none;
+        .footer {
+            margin-top: 60px;
+            font-size: 0.6rem;
+            letter-spacing: 3px;
+            color: rgba(255,255,255,0.18);
+            text-transform: uppercase;
         }
 
         .bubble {
-    position: fixed;
-    bottom: -100px;
-    background: radial-gradient(circle at 30% 30%, rgba(255, 255, 255, 0.5), rgba(255, 255, 255, 0.1));
-    border: 1px solid rgba(255, 255, 255, 0.3);
-    border-radius: 50%;
-    pointer-events: none;
-    z-index: 5;
-   
-    box-shadow: inset -2px -2px 5px rgba(255, 255, 255, 0.2), 
-                inset 2px 2px 5px rgba(255, 255, 255, 0.3);
-    animation: rise var(--speed) ease-in forwards, 
-               wobble var(--wobble-speed) ease-in-out infinite alternate;
-}
+            position: fixed;
+            bottom: -60px;
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 4;
+            background: radial-gradient(circle at 35% 35%,
+                rgba(255,255,255,0.55),
+                rgba(0,200,220,0.12));
+            border: 1px solid rgba(255,255,255,0.22);
+            box-shadow:
+                inset -2px -3px 6px rgba(255,255,255,0.25),
+                inset  2px  2px 6px rgba(0,200,240,0.15);
+            animation:
+                rise var(--spd) ease-in forwards,
+                wobble var(--wob) ease-in-out infinite alternate;
+        }
+        @keyframes rise {
+            0%   { transform:translateY(0);       opacity:0; }
+            8%   { opacity:0.75; }
+            92%  { opacity:0.75; }
+            100% { transform:translateY(-115vh); opacity:0; }
+        }
+        @keyframes wobble {
+            from { margin-left:0; }
+            to   { margin-left:22px; }
+        }
 
-
-@keyframes rise {
-    0% { transform: translateY(0); opacity: 0; }
-    10% { opacity: 0.8; }
-    90% { opacity: 0.8; }
-    100% { transform: translateY(-120vh); opacity: 0; }
-}
-
-
-@keyframes wobble {
-    0% { margin-left: 0px; }
-    100% { margin-left: 20px; }
-}
+        @media(max-width:600px){
+            .countdown-card{ padding:30px 20px; }
+            .flip-box{ width:70px; height:70px; }
+            .flip-face{ font-size:2.4rem; border-radius:10px; }
+            .timer{ gap:10px; }
+            .sep{ font-size:2rem; }
+            #depth-meter{ display:none; }
+            #sonar{ bottom:20px; right:20px; width:60px; height:60px; }
+        }
     </style>
 </head>
 <body>
 
 <div id="bg-container"></div>
-<div class="overlay"></div>
+<div id="scanlines"></div>
+<canvas id="particle-canvas"></canvas>
+
+<div id="sonar">
+    <div class="sonar-ring"></div>
+    <div class="sonar-ring"></div>
+    <div class="sonar-ring"></div>
+    <div class="sonar-dot"></div>
+</div>
+
+<div id="depth-meter">
+    <div class="depth-label" id="l-depth">DEPTH</div>
+    <div class="depth-bar"><div class="depth-fill"></div></div>
+    <div class="depth-num" id="depth-readout">1024m</div>
+</div>
 
 <div class="lang-switch">
-    <button onclick="setLanguage('ru')">RU</button>
-    <button onclick="setLanguage('en')">EN</button>
+    <button onclick="setLanguage('ru')" id="btn-ru">RU</button>
+    <button onclick="setLanguage('en')" id="btn-en">EN</button>
 </div>
 
 <div class="content">
     <div class="logo-wrapper">
-        <img src="img/logo.png" alt="Subnautica 2">
+        <img src="img/logo.png" alt="Subnautica 2" loading="eager">
     </div>
 
-    <div class="countdown-wrapper">
-        <div class="countdown-title" id="t-title">Экспедиция начнется через</div>
+    <div class="countdown-card">
+        <div class="card-corner-tr"></div>
+        <div class="card-corner-bl"></div>
+        <div class="countdown-title" id="t-title">Экспедиция начнётся через</div>
         <div class="timer">
-            <div class="time-box"><span id="days">00</span><div id="l-days">Дней</div></div>
-            <div class="time-box"><span id="hours">00</span><div id="l-hours">Часов</div></div>
-            <div class="time-box"><span id="minutes">00</span><div id="l-minutes">Минут</div></div>
-            <div class="time-box"><span id="seconds">00</span><div id="l-seconds">Секунд</div></div>
+            <div class="time-block">
+                <div class="flip-box"><div class="flip-face" id="days">00</div></div>
+                <div class="time-label" id="l-days">Дней</div>
+            </div>
+            <div class="sep">:</div>
+            <div class="time-block">
+                <div class="flip-box"><div class="flip-face" id="hours">00</div></div>
+                <div class="time-label" id="l-hours">Часов</div>
+            </div>
+            <div class="sep">:</div>
+            <div class="time-block">
+                <div class="flip-box"><div class="flip-face" id="minutes">00</div></div>
+                <div class="time-label" id="l-minutes">Минут</div>
+            </div>
+            <div class="sep">:</div>
+            <div class="time-block">
+                <div class="flip-box"><div class="flip-face" id="seconds">00</div></div>
+                <div class="time-label" id="l-seconds">Секунд</div>
+            </div>
         </div>
-        <button class="calendar-btn" id="t-btn" onclick="addToCalendar()">Добавить в календарь</button>
+
+        <div class="local-time-hint" id="local-hint"></div>
+
+        <button class="calendar-btn" onclick="addToCalendar()">
+            <span id="t-btn">Добавить в календарь</span>
+        </button>
     </div>
+
+    <div class="divider"></div>
 
     <div class="trailer-section">
+        <div class="trailer-label" id="t-trailer">— ОФИЦИАЛЬНЫЙ ТРЕЙЛЕР —</div>
         <div class="trailer-wrapper">
-            <iframe src="https://www.youtube.com/embed/8EZhCzFaQuw" allowfullscreen></iframe>
+            <iframe src="https://www.youtube.com/embed/8EZhCzFaQuw"
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                    allowfullscreen loading="lazy"></iframe>
         </div>
     </div>
+
+    <div class="footer" id="t-footer">Unknown Worlds Entertainment © 2026</div>
 </div>
 
-<audio id="sound" loop>
-    <source src="img/subnautica_01. Salutations" type="audio/mpeg">
+<audio id="ambient" loop>
+    <source src="img/subnautica_01. Salutations.mp3" type="audio/mpeg">
 </audio>
 
 <script>
-    const translations = {
-        ru: {
-            title: "Экспедиция начнется через",
-            days: "Дней", hours: "Часов", minutes: "Минут", seconds: "Секунд",
-            btn: "Добавить в календарь"
-        },
-        en: {
-            title: "Expedition starts in",
-            days: "Days", hours: "Hours", minutes: "Minutes", seconds: "Seconds",
-            btn: "Add to Calendar"
-        }
-    };
 
-    function setLanguage(lang) {
-        const t = translations[lang];
-        document.getElementById('t-title').innerText = t.title;
-        document.getElementById('t-btn').innerText = t.btn;
-        document.getElementById('l-days').innerText = t.days;
-        document.getElementById('l-hours').innerText = t.hours;
-        document.getElementById('l-minutes').innerText = t.minutes;
-        document.getElementById('l-seconds').innerText = t.seconds;
-        localStorage.setItem('subnautica_lang', lang);
+
+const BG_IMAGES = [
+    'img/bg1.jpg',
+    'img/bg2.jpg',
+    'img/bg3.jpg',
+    'img/bg4.jpg',
+    'img/bg5.jpg',
+    'img/ss_eab92bde7378f6532f765001126a8fb8b10ca8f9.1920x1080.jpg',
+    'img/ss_e631ef3b91faacacb5a2c823d0b979083548d66f.1920x1080.jpg',
+    'img/ss_56159597a28edfb07c6dd27b4a00f2e06e571048.1920x1080.jpg',
+    'img/ss_823b102b09530bbf588f5e9752cb52f1681dc992.1920x1080.jpg',
+    'img/ss_787e2315a1eb5aaba73c4f75e6f7d7d8835fa260.1920x1080.jpg',
+    'img/ss_16b68b0941ed9c5ac1eea74e478fa726d425bebf.1920x1080.jpg',
+];
+
+const TARGET_UTC = new Date('2026-05-14T15:00:00Z');
+
+const TR = {
+    ru: {
+        title:   'Экспедиция начнётся через',
+        days:    'Дней',
+        hours:   'Часов',
+        minutes: 'Минут',
+        seconds: 'Секунд',
+        btn:     'Добавить в календарь',
+        trailer: '— ОФИЦИАЛЬНЫЙ ТРЕЙЛЕР —',
+        depth:   'ГЛУБИНА',
+        hint:    (t) => `Начало в вашем часовом поясе: <span>${t}</span>`,
+    },
+    en: {
+        title:   'Expedition starts in',
+        days:    'Days',
+        hours:   'Hours',
+        minutes: 'Minutes',
+        seconds: 'Seconds',
+        btn:     'Add to Calendar',
+        trailer: '— OFFICIAL TRAILER —',
+        depth:   'DEPTH',
+        hint:    (t) => `Launches in your timezone: <span>${t}</span>`,
     }
+};
 
-    
-    const targetDate = new Date('2026-05-14T15:00:00Z').getTime();
-    function updateTimer() {
-        const d = targetDate - Date.now();
-        if (d < 0) return;
-        document.getElementById('days').innerText = Math.floor(d / 86400000);
-        document.getElementById('hours').innerText = Math.floor(d / 3600000) % 24;
-        document.getElementById('minutes').innerText = Math.floor(d / 60000) % 60;
-        document.getElementById('seconds').innerText = Math.floor(d / 1000) % 60;
-    }
-    setInterval(updateTimer, 1000);
-    updateTimer();
+let currentLang = 'ru';
 
-    function addToCalendar() {
-        window.open("https://calendar.google.com/calendar/render?action=TEMPLATE&text=Subnautica+2&dates=20260514T150000Z/20260514T170000Z");
-    }
-
-    
-    const bgImages = ['img/bg1.jpg', 'img/bg2.jpg'];
-    let currentImg = 0;
-    const container = document.getElementById('bg-container');
-
-    bgImages.forEach((src, idx) => {
-        const d = document.createElement('div');
-        d.className = 'bg-image';
-        d.style.backgroundImage = `url(${src})`;
-        if (idx === 0) d.classList.add('active');
-        container.appendChild(d);
+function localEventTime() {
+    return TARGET_UTC.toLocaleString(currentLang === 'ru' ? 'ru-RU' : 'en-US', {
+        day:    'numeric',
+        month:  'long',
+        year:   'numeric',
+        hour:   '2-digit',
+        minute: '2-digit',
+        timeZoneName: 'short'
     });
-
-    setInterval(() => {
-        const imgs = document.querySelectorAll('.bg-image');
-        imgs[currentImg].classList.remove('active');
-        currentImg = (currentImg + 1) % imgs.length;
-        imgs[currentImg].classList.add('active');
-    }, 8000);
-
-    
-    document.addEventListener('mousemove', e => {
-        const x = (e.clientX / window.innerWidth - 0.5) * 15;
-        const y = (e.clientY / window.innerHeight - 0.5) * 15;
-        document.querySelectorAll('.bg-image').forEach(el => {
-            el.style.transform = `scale(1.1) translate(${x}px, ${y}px)`;
-        });
-    });
-
-    
-    document.addEventListener('click', () => {
-        const s = document.getElementById('sound');
-        s.volume = 0.3;
-        s.play().catch(()=>{});
-    }, { once: true });
-
-    
-    setLanguage(localStorage.getItem('subnautica_lang') || 'ru');
-
-    function createBubble() {
-    const bubble = document.createElement('div');
-    bubble.className = 'bubble';
-    
-    
-    const size = Math.random() * 17 + 8 + 'px';
-    bubble.style.width = size;
-    bubble.style.height = size;
-    
-    bubble.style.left = Math.random() * 100 + 'vw';
-    
-    
-    const speed = Math.random() * 5 + 5 + 's';
-    bubble.style.setProperty('--speed', speed);
-    
-    
-    const wobbleSpeed = Math.random() * 2 + 1 + 's';
-    bubble.style.setProperty('--wobble-speed', wobbleSpeed);
-    
-    document.body.appendChild(bubble);
-    
-    setTimeout(() => { bubble.remove(); }, 10000);
 }
 
+function setLanguage(lang) {
+    currentLang = lang;
+    const t = TR[lang];
+    document.getElementById('t-title').textContent   = t.title;
+    document.getElementById('l-days').textContent    = t.days;
+    document.getElementById('l-hours').textContent   = t.hours;
+    document.getElementById('l-minutes').textContent = t.minutes;
+    document.getElementById('l-seconds').textContent = t.seconds;
+    document.getElementById('t-btn').textContent     = t.btn;
+    document.getElementById('t-trailer').textContent = t.trailer;
+    document.getElementById('l-depth').textContent   = t.depth;
+    document.getElementById('local-hint').innerHTML  = t.hint(localEventTime());
 
-setInterval(createBubble, 400);
+    document.querySelectorAll('.lang-switch button').forEach(b => b.classList.remove('active'));
+    document.getElementById('btn-' + lang).classList.add('active');
+    localStorage.setItem('sub2_lang', lang);
+}
+
+const prev = { d: -1, h: -1, m: -1, s: -1 };
+
+function pad(n) { return String(n).padStart(2, '0'); }
+
+function flash(id) {
+    const el = document.getElementById(id);
+    el.classList.remove('flash');
+    void el.offsetWidth; // reflow
+    el.classList.add('flash');
+}
+
+function updateTimer() {
+    const diff = TARGET_UTC.getTime() - Date.now();
+    if (diff <= 0) {
+        ['days','hours','minutes','seconds'].forEach(id => {
+            document.getElementById(id).textContent = '00';
+        });
+        return;
+    }
+
+    const d = Math.floor(diff / 86400000);
+    const h = Math.floor(diff / 3600000) % 24;
+    const m = Math.floor(diff / 60000) % 60;
+    const s = Math.floor(diff / 1000)  % 60;
+
+    if (d !== prev.d) { document.getElementById('days').textContent    = pad(d); flash('days');    prev.d = d; }
+    if (h !== prev.h) { document.getElementById('hours').textContent   = pad(h); flash('hours');   prev.h = h; }
+    if (m !== prev.m) { document.getElementById('minutes').textContent = pad(m); flash('minutes'); prev.m = m; }
+    if (s !== prev.s) { document.getElementById('seconds').textContent = pad(s); flash('seconds'); prev.s = s; }
+}
+
+setInterval(updateTimer, 500);
+updateTimer();
+
+let depthVal = 800;
+let depthDir = 1;
+setInterval(() => {
+    depthVal += (Math.random() * 20 - 8) * depthDir;
+    depthVal = Math.max(512, Math.min(2048, depthVal));
+    if (depthVal >= 2000) depthDir = -1;
+    if (depthVal <= 600)  depthDir =  1;
+    document.getElementById('depth-readout').textContent = Math.round(depthVal) + 'm';
+}, 1200);
+
+function addToCalendar() {
+    window.open(
+        'https://calendar.google.com/calendar/render?action=TEMPLATE' +
+        '&text=Subnautica+2+Launch' +
+        '&dates=20260514T150000Z/20260514T180000Z' +
+        '&details=The+expedition+begins.+subnautica.com'
+    );
+}
+
+(function initBg() {
+    const container = document.getElementById('bg-container');
+    let slides = [];
+
+    BG_IMAGES.forEach((src, i) => {
+        const div = document.createElement('div');
+        div.className = 'bg-slide';
+        div.style.backgroundImage = `url(${src})`;
+        container.appendChild(div);
+        slides.push(div);
+    });
+
+    if (!slides.length) return;
+    slides[0].classList.add('active');
+    let cur = 0;
+
+    setInterval(() => {
+        slides[cur].classList.remove('active');
+        cur = (cur + 1) % slides.length;
+        slides[cur].classList.add('active');
+    }, 7000);
+})();
+
+document.addEventListener('mousemove', e => {
+    const x = (e.clientX / innerWidth  - 0.5) * 18;
+    const y = (e.clientY / innerHeight - 0.5) * 18;
+    document.querySelectorAll('.bg-slide').forEach(el => {
+        el.style.transform = `scale(1.08) translate(${x}px,${y}px)`;
+    });
+});
+
+(function initParticles() {
+    const canvas = document.getElementById('particle-canvas');
+    const ctx = canvas.getContext('2d');
+    let W, H, particles = [];
+
+    function resize() {
+        W = canvas.width  = innerWidth;
+        H = canvas.height = innerHeight;
+    }
+    resize();
+    window.addEventListener('resize', resize);
+
+    const COUNT = 80;
+    for (let i = 0; i < COUNT; i++) {
+        particles.push({
+            x:    Math.random() * innerWidth,
+            y:    Math.random() * innerHeight,
+            r:    Math.random() * 2.5 + 0.5,
+            vx:   (Math.random() - 0.5) * 0.3,
+            vy:   -(Math.random() * 0.5 + 0.1),
+            life: Math.random(),
+            spd:  Math.random() * 0.003 + 0.001,
+            hue:  Math.random() > 0.5 ? 185 : 160,
+        });
+    }
+
+    function draw() {
+        ctx.clearRect(0, 0, W, H);
+        particles.forEach(p => {
+            p.life += p.spd;
+            if (p.life > 1) {
+                p.life = 0;
+                p.x = Math.random() * W;
+                p.y = H + 20;
+                p.vy = -(Math.random() * 0.5 + 0.1);
+            }
+            const alpha = Math.sin(p.life * Math.PI) * 0.7;
+            ctx.beginPath();
+            ctx.arc(p.x + p.vx * p.life * 200, p.y - p.vy * p.life * 300, p.r, 0, Math.PI * 2);
+            ctx.fillStyle = `hsla(${p.hue}, 100%, 75%, ${alpha})`;
+            ctx.shadowColor = `hsl(${p.hue}, 100%, 80%)`;
+            ctx.shadowBlur  = 8;
+            ctx.fill();
+        });
+        requestAnimationFrame(draw);
+    }
+    draw();
+})();
+
+function spawnBubble() {
+    const b = document.createElement('div');
+    b.className = 'bubble';
+    const sz = Math.random() * 20 + 6;
+    b.style.cssText = `
+        width:${sz}px; height:${sz}px;
+        left:${Math.random()*100}vw;
+        --spd:${Math.random()*6+6}s;
+        --wob:${Math.random()*2+1}s;
+    `;
+    document.body.appendChild(b);
+    setTimeout(() => b.remove(), 13000);
+}
+setInterval(spawnBubble, 350);
+
+document.addEventListener('click', () => {
+    const a = document.getElementById('ambient');
+    a.volume = 0.25;
+    a.play().catch(() => {});
+}, { once: true });
+
+setLanguage(localStorage.getItem('sub2_lang') || 'ru');
 </script>
-
 </body>
 </html>
