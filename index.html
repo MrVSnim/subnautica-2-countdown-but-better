@@ -623,80 +623,115 @@ document.addEventListener('click', () => {
     const canvas = document.getElementById('sonar-canvas');
     const ctx = canvas.getContext('2d');
     const W = 90, H = 90, CX = 45, CY = 45, R = 38;
-
+    const MAX_BLIPS = 15;
     const blips = [];
 
     function spawnBlip() {
-        const angle = Math.random() * Math.PI * 2;
-        const dist  = Math.random() * R * 0.75 + R * 0.15;
+        if (blips.length >= MAX_BLIPS) return;
+
+        // Стартуют за краем радара и плывут внутрь
+        const entryAngle = Math.random() * Math.PI * 2;
+        const startDist  = R + 5;
+        const endDist    = Math.random() * R * 0.6 + 5;
+        const driftAngle = entryAngle + (Math.random() - 0.5) * 0.8;
+
         blips.push({
-            x:     CX + Math.cos(angle) * dist,
-            y:     CY + Math.sin(angle) * dist,
-            alpha: 1,
-            decay: Math.random() * 0.008 + 0.004,
+            angle:     entryAngle,
+            dist:      startDist,
+            targetDist: endDist,
+            driftAngle: driftAngle,
+            phase:     0,         // 0=влетает, 1=дрейфует, 2=улетает
+            phaseTime: 0,
+            driftDur:  Math.random() * 120 + 80,
+            alpha:     0,
         });
     }
 
-    setInterval(spawnBlip, Math.random() * 3000 + 2000);
-    setInterval(() => {
-        setInterval(spawnBlip, Math.random() * 3000 + 2000);
-    }, 5000);
+    function scheduleNext() {
+        setTimeout(() => { spawnBlip(); scheduleNext(); }, Math.random() * 2500 + 800);
+    }
+    scheduleNext();
 
     let scanAngle = 0;
 
     function drawSonar() {
         ctx.clearRect(0, 0, W, H);
 
+        // Sweep
         ctx.save();
         ctx.beginPath();
         ctx.arc(CX, CY, R, 0, Math.PI * 2);
         ctx.clip();
-
-        const sweep = ctx.createConicalGradient
-            ? null
-            : null;
-
-        const grad = ctx.createConicGradient
-            ? ctx.createConicGradient(scanAngle, CX, CY)
-            : null;
-
-        if (grad) {
-            grad.addColorStop(0,    'rgba(0,242,254,0.18)');
-            grad.addColorStop(0.15, 'rgba(0,242,254,0)');
-            grad.addColorStop(1,    'rgba(0,242,254,0)');
-            ctx.fillStyle = grad;
-            ctx.fillRect(0, 0, W, H);
-        } else {
-            const x2 = CX + Math.cos(scanAngle) * R;
-            const y2 = CY + Math.sin(scanAngle) * R;
-            const sweepGrad = ctx.createLinearGradient(CX, CY, x2, y2);
-            sweepGrad.addColorStop(0, 'rgba(0,242,254,0.2)');
-            sweepGrad.addColorStop(1, 'rgba(0,242,254,0)');
-            ctx.fillStyle = sweepGrad;
-            ctx.beginPath();
-            ctx.moveTo(CX, CY);
-            ctx.arc(CX, CY, R, scanAngle - 0.6, scanAngle);
-            ctx.closePath();
-            ctx.fill();
-        }
-
+        const sweep = ctx.createLinearGradient(
+            CX, CY,
+            CX + Math.cos(scanAngle) * R,
+            CY + Math.sin(scanAngle) * R
+        );
+        sweep.addColorStop(0,    'rgba(0,242,254,0.22)');
+        sweep.addColorStop(1,    'rgba(0,242,254,0)');
+        ctx.beginPath();
+        ctx.moveTo(CX, CY);
+        ctx.arc(CX, CY, R, scanAngle - 0.7, scanAngle);
+        ctx.closePath();
+        ctx.fillStyle = sweep;
+        ctx.fill();
         ctx.restore();
 
+        // Blips
         for (let i = blips.length - 1; i >= 0; i--) {
             const b = blips[i];
-            b.alpha -= b.decay;
-            if (b.alpha <= 0) { blips.splice(i, 1); continue; }
+            b.phaseTime++;
 
+            if (b.phase === 0) {
+                // Влетает: dist -> targetDist, alpha 0->1
+                const spd = 0.04;
+                b.dist  += (b.targetDist - b.dist)  * spd;
+                b.alpha += (1 - b.alpha) * spd * 1.5;
+                b.angle += (b.driftAngle - b.angle) * spd;
+                if (Math.abs(b.dist - b.targetDist) < 1.5) {
+                    b.phase = 1; b.phaseTime = 0;
+                }
+            } else if (b.phase === 1) {
+                // Дрейф: медленно плывёт по дуге
+                b.angle += 0.004;
+                b.dist  += Math.sin(b.phaseTime * 0.04) * 0.08;
+                b.alpha  = 0.7 + Math.sin(b.phaseTime * 0.08) * 0.3;
+                if (b.phaseTime > b.driftDur) {
+                    b.phase = 2; b.phaseTime = 0;
+                    b.exitAngle = b.angle + (Math.random() - 0.5) * 0.5;
+                }
+            } else {
+                // Улетает: к краю, alpha -> 0
+                const spd = 0.035;
+                b.dist  += (R + 8 - b.dist) * spd;
+                b.angle += (b.exitAngle - b.angle) * spd;
+                b.alpha -= 0.018;
+                if (b.alpha <= 0) { blips.splice(i, 1); continue; }
+            }
+
+            const bx = CX + Math.cos(b.angle) * b.dist;
+            const by = CY + Math.sin(b.angle) * b.dist;
+
+            // Outer glow
+            const grd = ctx.createRadialGradient(bx, by, 0, bx, by, 7);
+            grd.addColorStop(0,   `rgba(255,60,60,${b.alpha * 0.5})`);
+            grd.addColorStop(1,   'rgba(255,0,0,0)');
             ctx.beginPath();
-            ctx.arc(b.x, b.y, 3, 0, Math.PI * 2);
-            ctx.fillStyle = `rgba(255, 50, 50, ${b.alpha})`;
-            ctx.shadowColor = 'rgba(255,0,0,0.8)';
-            ctx.shadowBlur = 6;
+            ctx.arc(bx, by, 7, 0, Math.PI * 2);
+            ctx.fillStyle = grd;
             ctx.fill();
-            ctx.shadowBlur = 0;
+
+            // Core dot
+            ctx.beginPath();
+            ctx.arc(bx, by, 2.5, 0, Math.PI * 2);
+            ctx.fillStyle = `rgba(255, 80, 80, ${b.alpha})`;
+            ctx.shadowColor = 'rgba(255,0,0,0.9)';
+            ctx.shadowBlur  = 8;
+            ctx.fill();
+            ctx.shadowBlur  = 0;
         }
 
-        scanAngle += 0.03;
+        scanAngle += 0.025;
         requestAnimationFrame(drawSonar);
     }
 
