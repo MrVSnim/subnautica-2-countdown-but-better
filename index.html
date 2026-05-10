@@ -462,14 +462,25 @@
 
     <div class="divider"></div>
 
-    <div class="trailer-section">
-        <div class="trailer-label" id="t-trailer">— ОФИЦИАЛЬНЫЙ ТРЕЙЛЕР —</div>
-        <div class="trailer-wrapper">
-            <iframe src="https://www.youtube.com/embed/8EZhCzFaQuw"
-                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                    allowfullscreen loading="lazy"></iframe>
-        </div>
+<div class="trailer-section">
+    <div class="trailer-label">— СИНЕМАТИК ТРЕЙЛЕР —</div>
+    <div class="trailer-wrapper">
+        <iframe src="https://www.youtube.com/embed/8EZhCzFaQuw"
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                allowfullscreen loading="lazy"></iframe>
     </div>
+</div>
+
+<div class="divider"></div>
+
+<div class="trailer-section">
+    <div class="trailer-label">— ГЕЙМПЛЕЙ ТРЕЙЛЕР —</div>
+    <div class="trailer-wrapper">
+        <iframe src="https://www.youtube.com/embed/6t2nDHldoSk"
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                allowfullscreen loading="lazy"></iframe>
+    </div>
+</div>
 
     <div class="footer" id="t-footer">Unknown Worlds Entertainment © 2026</div>
 </div>
@@ -544,7 +555,6 @@ function setLanguage(lang) {
     document.getElementById('l-minutes').textContent = t.minutes;
     document.getElementById('l-seconds').textContent = t.seconds;
     document.getElementById('t-btn').textContent     = t.btn;
-    document.getElementById('t-trailer').textContent = t.trailer;
     document.getElementById('l-depth').textContent   = t.depth;
     document.getElementById('local-hint').innerHTML  = t.hint(localEventTime());
 
@@ -560,7 +570,7 @@ function pad(n) { return String(n).padStart(2, '0'); }
 function flash(id) {
     const el = document.getElementById(id);
     el.classList.remove('flash');
-    void el.offsetWidth; // reflow
+    void el.offsetWidth;
     el.classList.add('flash');
 }
 
